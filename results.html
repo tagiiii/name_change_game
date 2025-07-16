@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投票結果 - 名前変えゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            /* High Contrast Flat Colors */
+            --md-primary: #2563EB;
+            --md-primary-container: #EFF6FF;
+            --md-on-primary: #FFFFFF;
+            --md-on-primary-container: #1E40AF;
+            --md-secondary: #059669;
+            --md-secondary-container: #ECFDF5;
+            --md-on-secondary: #FFFFFF;
+            --md-on-secondary-container: #065F46;
+            --md-tertiary: #DC2626;
+            --md-tertiary-container: #FEF2F2;
+            --md-on-tertiary: #FFFFFF;
+            --md-error: #EF4444;
+            --md-error-container: #FEF2F2;
+            --md-on-error: #FFFFFF;
+            --md-surface: #FFFFFF;
+            --md-surface-variant: #F8FAFC;
+            --md-surface-container-lowest: #FFFFFF;
+            --md-surface-container-low: #F8FAFC;
+            --md-surface-container: #F1F5F9;
+            --md-surface-container-high: #E2E8F0;
+            --md-surface-container-highest: #CBD5E1;
+            --md-on-surface: #1E293B;
+            --md-on-surface-variant: #475569;
+            --md-outline: #94A3B8;
+            --md-outline-variant: #E2E8F0;
+            --md-shadow: #000000;
+            --md-success: #10B981;
+            --md-success-container: #D1FAE5;
+            --md-warning: #F59E0B;
+            --md-warning-container: #FEF3C7;
+            
+            /* No Elevation for Flat Design */
+            --md-elevation-1: none;
+            --md-elevation-2: none;
+            --md-elevation-3: none;
+            
+            /* Minimal Border Radius for Flat Design */
+            --md-corner-xs: 4px;
+            --md-corner-sm: 6px;
+            --md-corner-md: 8px;
+            --md-corner-lg: 10px;
+            --md-corner-xl: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans JP', sans-serif;
+            background: var(--md-surface);
+            color: var(--md-on-surface);
+            line-height: 1.6;
+            font-size: 16px;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography */
+        .display-medium {
+            font-size: 2.8125rem;
+            font-weight: 400;
+            line-height: 3.25rem;
+            letter-spacing: 0;
+        }
+
+        .headline-large {
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 2.5rem;
+            letter-spacing: 0;
+        }
+
+        .headline-medium {
+            font-size: 1.75rem;
+            font-weight: 400;
+            line-height: 2.25rem;
+            letter-spacing: 0;
+        }
+
+        .headline-small {
+            font-size: 1.5rem;
+            font-weight: 400;
+            line-height: 2rem;
+            letter-spacing: 0;
+        }
+
+        .title-large {
+            font-size: 1.375rem;
+            font-weight: 400;
+            line-height: 1.75rem;
+            letter-spacing: 0;
+        }
+
+        .title-medium {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.5rem;
+            letter-spacing: 0.15px;
+        }
+
+        .label-large {
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.25rem;
+            letter-spacing: 0.1px;
+        }
+
+        .body-large {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .body-medium {
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.25rem;
+            letter-spacing: 0.25px;
+        }
+
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 24px;
+            gap: 32px;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            padding: 32px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 {
+            color: var(--md-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Buttons */
+        .md-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 40px;
+            padding: 0 24px;
+            border: none;
+            border-radius: var(--md-corner-xl);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            text-decoration: none;
+            user-select: none;
+            min-width: 64px;
+        }
+
+        .md-button-outlined {
+            background: transparent;
+            color: var(--md-primary);
+            border: 2px solid var(--md-primary);
+        }
+
+        .md-button-outlined:hover {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+        }
+
+        /* Material Icons */
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            text-rendering: optimizeLegibility;
+            font-feature-settings: 'liga';
+        }
+
+        .material-icons-18 { font-size: 18px; }
+
+        /* Cards */
+        .md-card {
+            background: var(--md-surface-container-low);
+            border-radius: var(--md-corner-lg);
+            border: 2px solid var(--md-outline-variant);
+            overflow: hidden;
+        }
+
+        .md-card-elevated {
+            border: 2px solid var(--md-primary);
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Results Layout */
+        .results-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--md-surface-container);
+            border-radius: var(--md-corner-lg);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--md-elevation-1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--md-primary);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--md-on-surface-variant);
+            font-weight: 500;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .result-card {
+            background: var(--md-surface-container-low);
+            border-radius: var(--md-corner-lg);
+            box-shadow: var(--md-elevation-1);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .result-card:hover {
+            box-shadow: var(--md-elevation-2);
+            transform: translateY(-2px);
+        }
+
+        .result-card.winner {
+            background: var(--md-success-container);
+            border: 2px solid var(--md-success);
+        }
+
+        .result-card.tie {
+            background: var(--md-warning-container);
+            border: 2px solid var(--md-warning);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--md-outline-variant);
+        }
+
+        .changed-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: var(--md-corner-xl);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-winner {
+            background: var(--md-success);
+            color: var(--md-on-primary);
+        }
+
+        .badge-tie {
+            background: var(--md-warning);
+            color: var(--md-on-primary);
+        }
+
+        .result-content {
+            padding: 16px 24px 24px;
+        }
+
+        .result-winner {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .winner-name {
+            color: var(--md-success);
+        }
+
+        .tie-names {
+            color: var(--md-warning);
+        }
+
+        .vote-breakdown {
+            margin-top: 16px;
+        }
+
+        .vote-breakdown h4 {
+            color: var(--md-on-surface-variant);
+            margin-bottom: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .vote-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--md-surface-container);
+            border-radius: var(--md-corner-sm);
+            transition: all 0.2s ease;
+        }
+
+        .vote-item.top-vote {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+        }
+
+        .vote-name {
+            font-weight: 500;
+        }
+
+        .vote-count {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .vote-bar {
+            width: 80px;
+            height: 4px;
+            background: var(--md-outline-variant);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .vote-bar-fill {
+            height: 100%;
+            background: var(--md-primary);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .vote-item.top-vote .vote-bar-fill {
+            background: var(--md-success);
+        }
+
+        /* Loading and Error States */
+        .loading {
+            text-align: center;
+            padding: 64px 32px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .loading .material-icons {
+            font-size: 48px;
+            color: var(--md-primary);
+            margin-bottom: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: var(--md-error-container);
+            color: var(--md-on-surface);
+            padding: 24px;
+            border-radius: var(--md-corner-lg);
+            text-align: center;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .error .material-icons {
+            color: var(--md-error);
+        }
+
+        /* Room info */
+        .room-info {
+            background: var(--md-surface-container);
+            border-radius: var(--md-corner-lg);
+            padding: 16px 24px;
+            text-align: center;
+            margin-bottom: 32px;
+            color: var(--md-on-surface-variant);
+        }
+
+        /* Responsive adjustments for desktop */
+        @media (min-width: 1024px) {
+            .app-container {
+                max-width: 1400px;
+                padding: 0 40px;
+                gap: 40px;
+            }
+
+            .card-content {
+                padding: 32px;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 32px;
+            }
+
+            .summary-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 24px;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .app-container {
+                max-width: 1600px;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">
+                <span class="material-icons">analytics</span>
+                投票結果発表
+            </h1>
+            <a href="#" class="md-button md-button-outlined" id="back-to-game-button">
+                <span class="material-icons material-icons-18">arrow_back</span>
+                ゲームに戻る
+            </a>
+        </header>
+
+        <div class="room-info" id="room-info"></div>
+
+        <div id="loading" class="loading">
+            <div>
+                <span class="material-icons">analytics</span>
+                <div class="title-medium" style="margin-top: 16px;">結果を読み込み中...</div>
+                <div class="body-medium" style="margin-top: 8px; color: var(--md-on-surface-variant);">投票データを集計しています</div>
+            </div>
+        </div>
+
+        <div id="error-message" class="error" style="display: none;">
+            <span class="material-icons">error</span>
+            <span id="error-text"></span>
+        </div>
+
+        <div class="results-header" style="display: none;" id="results-title">
+            <h2 class="headline-medium">名前変えゲーム - 最終結果</h2>
+            <p class="body-large" style="color: var(--md-on-surface-variant); margin-top: 8px;">
+                投票結果をもとに最多票の組み合わせを発表します
+            </p>
+        </div>
+
+        <div id="summary-stats" class="summary-stats" style="display: none;"></div>
+
+        <div id="results-grid" class="results-grid" style="display: none;"></div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script>
+        let currentRoomId = null;
+
+        // ページ初期化
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Supabaseクライアントの初期化
+                await initializeSupabase();
+                
+                // URLパラメータからルームIDを取得
+                const urlParams = new URLSearchParams(window.location.search);
+                currentRoomId = urlParams.get('room');
+                
+                if (!currentRoomId) {
+                    showError('ルームIDが指定されていません。');
+                    return;
+                }
+                
+                // ルーム情報を表示
+                document.getElementById('room-info').innerHTML = `
+                    <div class="body-medium">
+                        <strong>ルームID:</strong> ${currentRoomId}
+                    </div>
+                `;
+                
+                // ゲームに戻るボタンを設定
+                setupBackButton();
+                
+                // 結果を読み込み
+                await loadResults();
+            } catch (error) {
+                console.error('初期化エラー:', error);
+                showError('アプリケーションの初期化に失敗しました。');
+            }
+        });
+
+        async function loadResults() {
+            try {
+                // 投票結果を取得
+                const { data, error } = await DatabaseAPI.getVoteResults(currentRoomId);
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    showError('投票結果がありません。まだ投票が行われていない可能性があります。');
+                    return;
+                }
+                
+                // 結果を集計
+                const results = calculateVoteResults(data);
+                
+                // 統計情報を表示
+                displaySummaryStats(results, data);
+                
+                // 結果を表示
+                displayResults(results);
+                
+                // ローディングを隠して結果を表示
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results-title').style.display = 'block';
+                document.getElementById('summary-stats').style.display = 'grid';
+                document.getElementById('results-grid').style.display = 'grid';
+                
+            } catch (error) {
+                console.error('結果読み込みエラー:', error);
+                showError('結果の読み込みに失敗しました。');
+            }
+        }
+
+        function calculateVoteResults(data) {
+            const results = {};
+            
+            data.forEach(vote => {
+                const changedNameId = vote.changed_name_id;
+                const originalName = vote.selected_original_name;
+                const changedName = vote.changed_names.changed_name;
+                
+                if (!results[changedNameId]) {
+                    results[changedNameId] = {
+                        changedName,
+                        votes: {}
+                    };
+                }
+                
+                results[changedNameId].votes[originalName] = (results[changedNameId].votes[originalName] || 0) + 1;
+            });
+            
+            // 最多票を取得
+            const finalResults = {};
+            Object.entries(results).forEach(([changedNameId, result]) => {
+                let maxVotes = 0;
+                let winningNames = [];
+                
+                // 最大票数を取得
+                Object.entries(result.votes).forEach(([name, count]) => {
+                    if (count > maxVotes) {
+                        maxVotes = count;
+                    }
+                });
+                
+                // 最大票数と同じ票数の名前をすべて取得
+                Object.entries(result.votes).forEach(([name, count]) => {
+                    if (count === maxVotes) {
+                        winningNames.push(name);
+                    }
+                });
+                
+                finalResults[changedNameId] = {
+                    changedName: result.changedName,
+                    originalNames: winningNames,
+                    count: maxVotes,
+                    isTie: winningNames.length > 1,
+                    allVotes: result.votes
+                };
+            });
+            
+            return finalResults;
+        }
+
+        function displaySummaryStats(results, rawData) {
+            const statsContainer = document.getElementById('summary-stats');
+            
+            const totalVotes = rawData.length;
+            const totalItems = Object.keys(results).length;
+            const tieCount = Object.values(results).filter(result => result.isTie).length;
+            const winnerCount = totalItems - tieCount;
+            
+            const stats = [
+                { number: totalVotes, label: '総投票数', icon: 'how_to_vote' },
+                { number: totalItems, label: '投票項目', icon: 'list_alt' },
+                { number: winnerCount, label: '決定項目', icon: 'check_circle' },
+                { number: tieCount, label: '同票項目', icon: 'help' }
+            ];
+            
+            statsContainer.innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-number">${stat.number}</div>
+                    <div class="stat-label">${stat.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('results-grid');
+            
+            resultsContainer.innerHTML = Object.entries(results).map(([changedNameId, result]) => {
+                const cardClass = result.isTie ? 'result-card tie' : 'result-card winner';
+                const badgeClass = result.isTie ? 'badge-tie' : 'badge-winner';
+                const badgeText = result.isTie ? '同票' : '決定';
+                const winnerIcon = result.isTie ? 'help' : 'check_circle';
+                
+                // 投票の詳細を生成
+                const sortedVotes = Object.entries(result.allVotes)
+                    .sort(([,a], [,b]) => b - a)
+                    .map(([name, count]) => ({ name, count }));
+                
+                const maxVotes = Math.max(...Object.values(result.allVotes));
+                
+                const voteBreakdown = sortedVotes.map(vote => {
+                    const percentage = Math.round((vote.count / maxVotes) * 100);
+                    const isTopVote = vote.count === result.count;
+                    
+                    return `
+                        <div class="vote-item ${isTopVote ? 'top-vote' : ''}">
+                            <span class="vote-name">${vote.name}</span>
+                            <div class="vote-count">
+                                <span>${vote.count}票</span>
+                                <div class="vote-bar">
+                                    <div class="vote-bar-fill" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="${cardClass}">
+                        <div class="result-header">
+                            <div class="changed-name">${result.changedName}</div>
+                            <div class="result-badge ${badgeClass}">${badgeText}</div>
+                        </div>
+                        
+                        <div class="result-content">
+                            <div class="result-winner">
+                                <span class="material-icons material-icons-18">${winnerIcon}</span>
+                                ${result.isTie ? 
+                                    `<span class="tie-names">同票: ${result.originalNames.join('、')}</span> (各${result.count}票)` :
+                                    `<span class="winner-name">${result.originalNames[0]}</span> (${result.count}票)`
+                                }
+                            </div>
+                            
+                            <div class="vote-breakdown">
+                                <h4>投票詳細</h4>
+                                ${voteBreakdown}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setupBackButton() {
+            const backButton = document.getElementById('back-to-game-button');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // ゲームマスターのステップ4に戻る
+                    window.location.href = `gamemaster/step4.html?room=${currentRoomId}`;
+                });
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            const errorElement = document.getElementById('error-message');
+            document.getElementById('error-text').textContent = message;
+            errorElement.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

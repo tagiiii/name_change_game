@@ -1,0 +1,64 @@
+/* Flat Design CSS Variables */
+:root {
+    /* High Contrast Flat Colors */
+    --md-primary: #2563EB;
+    --md-primary-container: #EFF6FF;
+    --md-on-primary: #FFFFFF;
+    --md-on-primary-container: #1E40AF;
+    --md-secondary: #059669;
+    --md-secondary-container: #ECFDF5;
+    --md-on-secondary: #FFFFFF;
+    --md-on-secondary-container: #065F46;
+    --md-tertiary: #DC2626;
+    --md-tertiary-container: #FEF2F2;
+    --md-on-tertiary: #FFFFFF;
+    --md-error: #EF4444;
+    --md-error-container: #FEF2F2;
+    --md-on-error: #FFFFFF;
+    --md-surface: #FFFFFF;
+    --md-surface-variant: #F8FAFC;
+    --md-surface-container-lowest: #FFFFFF;
+    --md-surface-container-low: #F8FAFC;
+    --md-surface-container: #F1F5F9;
+    --md-surface-container-high: #E2E8F0;
+    --md-surface-container-highest: #CBD5E1;
+    --md-on-surface: #1E293B;
+    --md-on-surface-variant: #475569;
+    --md-outline: #94A3B8;
+    --md-outline-variant: #E2E8F0;
+    --md-shadow: #000000;
+    --md-success: #10B981;
+    --md-success-container: #D1FAE5;
+    
+    /* No Elevation for Flat Design */
+    --md-elevation-1: none;
+    --md-elevation-2: none;
+    --md-elevation-3: none;
+    --md-elevation-4: none;
+    --md-elevation-5: none;
+    
+    /* Minimal Border Radius for Flat Design */
+    --md-corner-xs: 4px;
+    --md-corner-sm: 6px;
+    --md-corner-md: 8px;
+    --md-corner-lg: 10px;
+    --md-corner-xl: 12px;
+}
+
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans JP', sans-serif;
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    line-height: 1.6;
+    font-size: 16px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

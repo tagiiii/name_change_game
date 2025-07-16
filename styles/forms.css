@@ -1,0 +1,115 @@
+/* Flat Design Form Elements */
+
+.md-text-field {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.md-text-field label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--md-on-surface);
+    margin-bottom: 8px;
+}
+
+.md-text-field input,
+.md-text-field select,
+.md-text-field textarea {
+    width: 100%;
+    height: 48px;
+    padding: 12px 16px;
+    border: 2px solid var(--md-outline-variant);
+    border-radius: var(--md-corner-sm);
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.md-text-field input:focus,
+.md-text-field select:focus,
+.md-text-field textarea:focus {
+    border-color: var(--md-primary);
+    background: var(--md-surface-container-low);
+}
+
+.md-text-field input:hover,
+.md-text-field select:hover,
+.md-text-field textarea:hover {
+    border-color: var(--md-outline);
+}
+
+.md-text-field input::placeholder,
+.md-text-field textarea::placeholder {
+    color: var(--md-on-surface-variant);
+    font-weight: 400;
+}
+
+.md-text-field input:disabled,
+.md-text-field select:disabled,
+.md-text-field textarea:disabled {
+    background: var(--md-surface-variant);
+    color: var(--md-on-surface-variant);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.md-text-field textarea {
+    height: auto;
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Form row layout */
+.form-row {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 24px;
+}
+
+.form-row .md-text-field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-row .md-button {
+    flex-shrink: 0;
+}
+
+/* Checkbox and radio styling */
+.md-checkbox,
+.md-radio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.md-checkbox input[type="checkbox"],
+.md-radio input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--md-outline);
+    background: var(--md-surface);
+    cursor: pointer;
+    margin: 0;
+}
+
+.md-checkbox input[type="checkbox"]:checked,
+.md-radio input[type="radio"]:checked {
+    background: var(--md-primary);
+    border-color: var(--md-primary);
+}
+
+.md-checkbox label,
+.md-radio label {
+    font-size: 16px;
+    color: var(--md-on-surface);
+    cursor: pointer;
+    margin: 0;
+}

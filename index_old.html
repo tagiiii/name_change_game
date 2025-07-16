@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名前変えゲーム - 投票アプリ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Yu Gothic', 'YuGothic', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.7;
+            min-height: 100vh;
+            font-feature-settings: "palt";
+            letter-spacing: 0.02em;
+        }
+
+        .app-header {
+            background: var(--white);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .app-header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--gray-900);
+            margin: 0;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            line-height: 1.2;
+        }
+
+        h2 {
+            color: var(--gray-900);
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 0.01em;
+            line-height: 1.3;
+        }
+
+        h3 {
+            color: var(--gray-800);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+        }
+
+        h4 {
+            color: var(--gray-700);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+        }
+
+        small {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--gray-600);
+        }
+
+        .role-selection {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .role-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 2rem 2.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+            min-width: 260px;
+            max-width: 300px;
+            text-align: center;
+            line-height: 1.4;
+            letter-spacing: 0.02em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            min-height: 120px;
+        }
+
+        .role-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .role-btn.active {
+            background: var(--gray-800);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--gray-700);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.25rem;
+            align-items: end;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-row .btn {
+            flex-shrink: 0;
+            margin-bottom: 0;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="text"], input[type="url"], select {
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: var(--white);
+            color: var(--gray-900);
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+            height: 48px;
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+        }
+
+        input[type="text"]:disabled, input[type="url"]:disabled, select:disabled {
+            background: var(--gray-50);
+            color: var(--gray-400);
+            cursor: not-allowed;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            line-height: 1.5;
+            letter-spacing: 0.02em;
+            height: 48px;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-400);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-lg {
+            padding: 0 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            height: 52px;
+            border-radius: var(--radius);
+            min-width: 160px;
+        }
+
+        .btn-xl {
+            padding: 0 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            height: 56px;
+            border-radius: var(--radius);
+            min-width: 200px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-sm {
+            padding: 0 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            height: 48px;
+            border-radius: var(--radius);
+            min-width: 80px;
+        }
+
+        .btn-nav {
+            padding: 0 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            height: 48px;
+            min-width: 90px;
+        }
+
+        .name-pairs {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--gray-200);
+        }
+
+        .name-pair {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            min-height: 60px;
+        }
+
+        .name-pair span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+        }
+
+        .name-pair:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--gray-300);
+        }
+
+        .name-pair:last-child {
+            margin-bottom: 0;
+        }
+
+        .voting-section {
+            margin-top: 2rem;
+        }
+
+        .vote-option {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .vote-option h4 {
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--gray-800);
+            line-height: 1.4;
+            letter-spacing: 0.01em;
+        }
+
+        .vote-option select {
+            font-size: 1.0625rem;
+            padding: 1rem 1.25rem;
+            min-height: 52px;
+        }
+
+        .vote-option:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .vote-option.selected {
+            border-color: var(--primary);
+            background: rgb(37 99 235 / 0.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .results {
+            margin-top: 2rem;
+        }
+
+        .result-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #48bb78;
+        }
+
+        .tie-result {
+            border-left: 4px solid #f56500;
+            background: #fef5e7;
+        }
+
+        .tie-note {
+            font-size: 0.9rem;
+            color: #f56500;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .status-bar {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .status-bar > div:first-child {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+        }
+
+        .timer {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--error);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error {
+            color: var(--error);
+            background: rgb(239 68 68 / 0.1);
+            border: 1px solid rgb(239 68 68 / 0.2);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .success {
+            color: var(--success);
+            background: rgb(16 185 129 / 0.1);
+            border: 1px solid rgb(16 185 129 / 0.2);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .help-text {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .help-text h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: 0.01em;
+        }
+
+        .help-text ol {
+            margin-left: 1.5rem;
+            color: var(--gray-600);
+        }
+
+        .help-text li {
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            letter-spacing: 0.01em;
+        }
+
+        .help-text p {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin: 0;
+            letter-spacing: 0.01em;
+        }
+
+        .step-guide {
+            margin-bottom: 2rem;
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            transition: all 0.2s ease;
+            border: 1px solid var(--gray-200);
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step.active {
+            color: var(--white);
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step.completed {
+            color: var(--white);
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .step-content {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .step-actions {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+            align-items: center;
+        }
+
+        .step-actions .btn {
+            min-width: 120px;
+        }
+
+        .role-btn small {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* デスクトップ最適化 */
+        @media (min-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                max-width: 1400px;
+            }
+            
+            .step-content {
+                padding: 3rem 4rem;
+            }
+            
+            .role-btn {
+                min-width: 300px;
+                max-width: 350px;
+                padding: 2.5rem 3rem;
+                font-size: 1.25rem;
+                min-height: 140px;
+                gap: 1rem;
+            }
+            
+            .btn {
+                padding: 0 1.75rem;
+                font-size: 0.9375rem;
+                height: 52px;
+                min-width: 120px;
+            }
+            
+            .btn-lg {
+                padding: 0 2.25rem;
+                font-size: 1.0625rem;
+                height: 56px;
+                min-width: 180px;
+            }
+            
+            .btn-xl {
+                padding: 0 3rem;
+                font-size: 1.25rem;
+                height: 60px;
+                min-width: 220px;
+            }
+            
+            .name-pairs {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 1.25rem;
+            }
+            
+            .form-row {
+                gap: 1.5rem;
+            }
+            
+            .vote-option {
+                padding: 2.25rem 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .role-selection {
+                flex-direction: column;
+            }
+            
+            .role-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .step-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="container">
+            <h1 id="app-title">名前変えゲーム - 投票アプリ</h1>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="container">
+        
+        <div class="help-text" id="game-flow-help">
+            <h3>• ゲームの流れ</h3>
+            <ol>
+                <li><strong>事前準備</strong>: 参加者が名前を変更</li>
+                <li><strong>ゲーム開始</strong>: ゲームマスターがルームを作成</li>
+                <li><strong>名前登録</strong>: ゲームマスターが参加者の名前と変更後の名前を入力</li>
+                <li><strong>投票</strong>: 回答者が「変更後の名前」→「参加者の名前」を推測</li>
+                <li><strong>結果発表</strong>: 最多票の組み合わせを表示</li>
+            </ol>
+        </div>
+        
+        <div class="role-selection">
+            <button class="role-btn" onclick="selectRole('gamemaster')">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600;">⚙️</div>
+                <div style="font-weight: 700;">ゲームマスター</div>
+                <small style="font-size: 0.875rem; opacity: 0.8; margin-top: 0.25rem;">ゲームを進行する人</small>
+            </button>
+        </div>
+
+        <!-- ゲームマスター画面 -->
+        <div id="gamemaster-screen" class="screen">
+            <div class="step-guide">
+                <h2>🎯 ゲームマスター</h2>
+                <div class="step-indicator">
+                    <div class="step active" id="step-1">1. URL共有</div>
+                    <div class="step" id="step-2">2. 名前登録</div>
+                    <div class="step" id="step-3">3. 投票開始</div>
+                    <div class="step" id="step-4">4. 結果確認</div>
+                </div>
+            </div>
+
+            <!-- ステップ1: URL共有 -->
+            <div class="step-content" id="step-content-1">
+                <h3>📋 ステップ1: 予想する人にURLを共有</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="room-url">参加者共有URL:</label>
+                        <input type="url" id="room-url" readonly>
+                    </div>
+                    <button class="btn btn-sm" onclick="copyUrl()">URLをコピー</button>
+                </div>
+                <div class="help-text">
+                    <p>💡 このURLを参加者に送信してください。参加者はこのURLからゲームに参加できます。</p>
+                </div>
+                <button class="btn btn-lg" onclick="goToStep(2)">次へ: 名前を登録する →</button>
+            </div>
+
+            <!-- ステップ2: 名前登録 -->
+            <div class="step-content" id="step-content-2" style="display: none;">
+                <h3>📝 ステップ2: 名前を登録</h3>
+                <div class="help-text">
+                    <p>💡 参加者の「変更前の名前」と「変更後の名前」を入力してください。</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="original-name">元の名前（変更前）:</label>
+                        <input type="text" id="original-name" placeholder="例: 田中太郎">
+                    </div>
+                    <button class="btn btn-sm" onclick="addOriginalName()">+ 追加</button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="changed-name">変更後の名前（Metapageで変更した名前）:</label>
+                        <input type="text" id="changed-name" placeholder="例: スーパーマン">
+                    </div>
+                    <button class="btn btn-sm" onclick="addChangedName()">+ 追加</button>
+                </div>
+
+                <div class="name-pairs">
+                    <h4>📋 参加者の名前リスト</h4>
+                    <div id="original-names-list"></div>
+                </div>
+
+                <div class="name-pairs">
+                    <h4>📋 変更後の名前リスト</h4>
+                    <div id="changed-names-list"></div>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-nav btn-secondary" onclick="goToStep(1)">戻る</button>
+                    <button class="btn btn-lg" onclick="goToStep(3)">次へ: 投票を開始する →</button>
+                </div>
+            </div>
+
+            <!-- ステップ3: 投票開始 -->
+            <div class="step-content" id="step-content-3" style="display: none;">
+                <h3>🗳️ ステップ3: 投票開始</h3>
+                <div class="help-text">
+                    <p>💡 参加者が投票できるようになります。投票時間を選択してください。</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="voting-duration">投票時間:</label>
+                    <select id="voting-duration">
+                        <option value="300">5分</option>
+                        <option value="600">10分</option>
+                        <option value="900">15分</option>
+                        <option value="1200" selected>20分</option>
+                    </select>
+                </div>
+                
+                <div class="voting-section" style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
+                    <button class="btn btn-xl btn-success" onclick="startVoting()">▶ 投票開始</button>
+                    <button class="btn btn-lg" onclick="endVoting()">■ 投票終了</button>
+                </div>
+
+                <div class="status-bar">
+                    <div id="voting-status-gm">投票待機中...</div>
+                    <div id="timer-gm" class="timer"></div>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-nav btn-secondary" onclick="goToStep(2)">戻る</button>
+                    <button class="btn btn-lg" onclick="goToStep(4)">次へ: 結果を確認する →</button>
+                </div>
+            </div>
+
+            <!-- ステップ4: 結果確認 -->
+            <div class="step-content" id="step-content-4" style="display: none;">
+                <h3>④ ステップ4: 投票結果</h3>
+                <div class="help-text">
+                    <p>💡 投票が終了しました。詳細な結果は別画面で確認できます。</p>
+                </div>
+                
+                <div style="text-align: center; padding: 2rem; background: var(--gray-50); border-radius: var(--radius); margin: 2rem 0;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h4 style="margin-bottom: 1rem; color: var(--gray-700);">投票結果を確認</h4>
+                    <p style="color: var(--gray-600); margin-bottom: 2rem;">別画面で詳細な投票結果と統計情報を確認できます</p>
+                    <button class="btn btn-xl btn-success" onclick="showResultsPage()">▲ 結果を大画面で見る</button>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-nav btn-secondary" onclick="goToStep(3)">戻る</button>
+                    <button class="btn btn-lg" onclick="resetGame()">↻ 新しいゲームを開始</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 参加者画面 -->
+        <div id="participant-screen" class="screen">
+            <div class="step-guide">
+                <h2>🗳️ 参加者</h2>
+                <div class="step-indicator">
+                    <div class="step active" id="participant-step-1">1. ルーム参加</div>
+                    <div class="step" id="participant-step-2">2. 名前確認</div>
+                    <div class="step" id="participant-step-3">3. 投票</div>
+                    <div class="step" id="participant-step-4">4. 結果確認</div>
+                </div>
+            </div>
+
+            <!-- ステップ1: ルーム参加 -->
+            <div class="step-content" id="participant-step-content-1">
+                <h3>🚪 ステップ1: ゲームに参加</h3>
+                
+                <!-- URL参加時のメッセージ -->
+                <div class="help-text" id="auto-join-message" style="display: none;">
+                    <p>🎉 ゲームマスターから共有されたURLでアクセスしました。</p>
+                    <p>自動的にゲームに参加しています...</p>
+                </div>
+                
+                <!-- 手動参加時のメッセージ -->
+                <div class="help-text" id="manual-join-message">
+                    <p>💡 ゲームマスターから共有されたURLでアクセスしてください。</p>
+                    <p>URLからアクセスした場合、自動的に参加します。</p>
+                </div>
+                
+            </div>
+
+            <!-- ステップ2: 名前確認 -->
+            <div class="step-content" id="participant-step-content-2" style="display: none;">
+                <h3>📋 ステップ2: 変更後の名前を確認</h3>
+                <div class="help-text">
+                    <p>💡 ゲームマスターが登録した「変更後の名前」一覧です。</p>
+                    <p>投票開始まで待機してください。</p>
+                </div>
+                
+                <div class="name-pairs">
+                    <h4>📋 変更後の名前一覧</h4>
+                    <div id="participant-changed-names"></div>
+                </div>
+
+                <div class="status-bar">
+                    <div id="voting-status">投票待機中...</div>
+                    <div id="timer" class="timer"></div>
+                </div>
+            </div>
+
+            <!-- ステップ3: 投票 -->
+            <div class="step-content" id="participant-step-content-3" style="display: none;">
+                <h3>🗳️ ステップ3: 投票</h3>
+                <div class="help-text">
+                    <p>💡 各「変更後の名前」について、「誰の元の名前だと思うか」を選択してください。</p>
+                    <p>⏰ 制限時間: ゲームマスターが設定した時間</p>
+                </div>
+                
+                <div class="voting-section">
+                    <div id="voting-options"></div>
+                    <button class="btn btn-xl" onclick="submitVote()" disabled>✓ 投票する</button>
+                </div>
+
+                <div class="status-bar">
+                    <div id="voting-status">投票中...</div>
+                    <div id="timer" class="timer"></div>
+                </div>
+            </div>
+
+            <!-- ステップ4: 結果確認 -->
+            <div class="step-content" id="participant-step-content-4" style="display: none;">
+                <h3>④ ステップ4: 投票結果</h3>
+                <div class="help-text">
+                    <p>💡 投票が終了しました。詳細な結果は別画面で確認できます。</p>
+                </div>
+                
+                <div style="text-align: center; padding: 2rem; background: var(--gray-50); border-radius: var(--radius); margin: 2rem 0;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎊</div>
+                    <h4 style="margin-bottom: 1rem; color: var(--gray-700);">お疲れさまでした！</h4>
+                    <p style="color: var(--gray-600); margin-bottom: 2rem;">投票結果を別画面で確認できます</p>
+                    <button class="btn btn-xl btn-success" onclick="showResultsPage()">▲ 結果を見る</button>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-nav btn-secondary" onclick="goToParticipantStep(3)">戻る</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

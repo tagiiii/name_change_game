@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステップ3: 投票開始 - 名前変えゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Material Design CSS Stylesheets -->
+    <link rel="stylesheet" href="../styles/material-design.css">
+    <link rel="stylesheet" href="../styles/typography.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/buttons.css">
+    <link rel="stylesheet" href="../styles/forms.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">ゲームマスター</h1>
+            <p class="body-large subtitle">ステップ3: 投票開始</p>
+        </header>
+        
+        <div class="md-stepper">
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">URL共有</div>
+            </div>
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">名前登録</div>
+            </div>
+            <div class="md-step active">
+                <div class="md-step-icon">3</div>
+                <div class="md-step-label">投票開始</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">4</div>
+                <div class="md-step-label">結果確認</div>
+            </div>
+        </div>
+
+        <div class="md-card">
+            <div class="card-content">
+                <h2 class="headline-small" style="margin-bottom: 24px;">
+                    <span class="material-icons" style="vertical-align: middle; margin-right: 8px;">how_to_vote</span>
+                    投票開始
+                </h2>
+                
+                <div class="help-text">
+                    <p class="body-medium">参加者が投票できるようになります。投票時間を選択してください。</p>
+                </div>
+                
+                <div class="md-text-field">
+                    <label for="voting-duration">投票時間</label>
+                    <select id="voting-duration">
+                        <option value="300">5分</option>
+                        <option value="600">10分</option>
+                        <option value="900">15分</option>
+                        <option value="1200" selected>20分</option>
+                    </select>
+                </div>
+                
+                <div class="voting-section">
+                    <button class="md-button md-button-filled md-button-large" onclick="VotingManager.startVoting()">
+                        <span class="material-icons material-icons-18">play_arrow</span>
+                        投票開始
+                    </button>
+                    <button class="md-button md-button-outlined md-button-large" onclick="VotingManager.endVoting()">
+                        <span class="material-icons material-icons-18">stop</span>
+                        投票終了
+                    </button>
+                </div>
+
+                <div class="status-bar">
+                    <div class="title-medium" id="voting-status-gm">投票待機中...</div>
+                    <div id="timer-gm" class="timer"></div>
+                </div>
+
+                <div class="action-bar">
+                    <a href="step2.html" class="md-button md-button-outlined" id="back-button">
+                        <span class="material-icons material-icons-18">arrow_back</span>
+                        戻る
+                    </a>
+                    <a href="step4.html" class="md-button md-button-filled md-button-large" id="next-button">
+                        次へ: 結果を確認する
+                        <span class="material-icons material-icons-18">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../supabase-client.js"></script>
+    
+    <!-- Application JavaScript Modules -->
+    <script src="../js/ui-manager.js"></script>
+    <script src="../js/room-manager.js"></script>
+    <script src="../js/voting-manager.js"></script>
+    <script src="../js/realtime-manager.js"></script>
+    
+    <script>
+        let currentRoomId = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeSupabase();
+                await initializePage();
+            } catch (error) {
+                console.error('初期化エラー:', error);
+                UI.showMessage('初期化に失敗しました', 'error');
+            }
+        });
+
+        async function initializePage() {
+            // URLパラメータからルームIDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRoomId = urlParams.get('room');
+            
+            if (!currentRoomId) {
+                UI.showMessage('ルームIDが見つかりません', 'error');
+                setTimeout(() => {
+                    location.href = '../index.html';
+                }, 2000);
+                return;
+            }
+            
+            // AppStateを設定
+            window.AppState = { 
+                currentRoomId, 
+                currentRole: 'gamemaster',
+                isVotingActive: false 
+            };
+            
+            // ナビゲーションボタンにルームIDを設定
+            document.getElementById('back-button').href = `step2.html?room=${currentRoomId}`;
+            document.getElementById('next-button').href = `step4.html?room=${currentRoomId}`;
+            
+            // リアルタイム更新を開始
+            RealtimeManager.startUpdates();
+            
+            // 現在の投票状態を確認
+            await checkVotingStatus();
+        }
+
+        async function checkVotingStatus() {
+            try {
+                const { data, error } = await DatabaseAPI.getRoomStatus(currentRoomId);
+                if (error) throw error;
+                
+                if (data && data.voting_active) {
+                    RoomManager.updateVotingStatus(data);
+                }
+            } catch (error) {
+                console.error('投票状態確認エラー:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+/* Material Design Components */
+
+/* Layout Components */
+.app-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 24px;
+    gap: 32px;
+}
+
+.app-header {
+    padding: 32px 0;
+    text-align: center;
+}
+
+.app-header h1 {
+    color: var(--md-primary);
+    margin-bottom: 8px;
+}
+
+.app-header .subtitle {
+    color: var(--md-on-surface-variant);
+}
+
+/* Flat Design Cards */
+.md-card {
+    background: var(--md-surface-container-low);
+    border-radius: var(--md-corner-lg);
+    border: 2px solid var(--md-outline-variant);
+    overflow: hidden;
+}
+
+.md-card-elevated {
+    background: var(--md-surface-container-low);
+    border: 2px solid var(--md-primary);
+}
+
+.card-content {
+    padding: 24px;
+}
+
+/* Material Icons */
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'liga';
+}
+
+.material-icons-18 { font-size: 18px; }
+.material-icons-20 { font-size: 20px; }
+
+/* Progress Steps */
+.md-stepper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: var(--md-surface-container);
+    border-radius: var(--md-corner-lg);
+}
+
+.md-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+}
+
+.md-step::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -12px;
+    width: 8px;
+    height: 1px;
+    background: var(--md-outline-variant);
+    transform: translateY(-50%);
+}
+
+.md-step:last-child::after {
+    display: none;
+}
+
+.md-step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--md-outline-variant);
+    color: var(--md-on-surface-variant);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.md-step.active .md-step-icon {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+}
+
+.md-step.completed .md-step-icon {
+    background: var(--md-success);
+    color: var(--md-on-primary);
+}
+
+.md-step-label {
+    font-size: 0.875rem;
+    color: var(--md-on-surface-variant);
+}
+
+.md-step.active .md-step-label {
+    color: var(--md-primary);
+    font-weight: 500;
+}
+
+/* Lists */
+.md-list {
+    background: var(--md-surface-container-low);
+    border-radius: var(--md-corner-lg);
+    overflow: hidden;
+}
+
+.md-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--md-outline-variant);
+    transition: background-color 0.2s ease;
+}
+
+.md-list-item:last-child {
+    border-bottom: none;
+}
+
+.md-list-item:hover {
+    background: rgba(103, 80, 164, 0.08);
+}
+
+/* Role Selection */
+.role-selection {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.role-card {
+    background: var(--md-surface-container-low);
+    border: 3px solid var(--md-outline-variant);
+    border-radius: var(--md-corner-lg);
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.role-card:hover {
+    border-color: var(--md-primary);
+    background: var(--md-primary-container);
+    transform: translateY(-2px);
+}
+
+.role-card.selected {
+    border-color: var(--md-primary);
+    background: var(--md-primary-container);
+    color: var(--md-on-primary-container);
+}
+
+.role-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.role-icon .material-icons {
+    font-size: 32px;
+}
+
+/* Status bar */
+.status-bar {
+    background: var(--md-surface-container);
+    border-radius: var(--md-corner-lg);
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+}
+
+.timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--md-error);
+    font-variant-numeric: tabular-nums;
+    margin-top: 8px;
+}
+
+/* Voting section */
+.voting-section {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 32px 0;
+}
+
+/* Messages */
+.md-message {
+    padding: 16px 24px;
+    border-radius: var(--md-corner-lg);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.md-message-success {
+    background: var(--md-success-container);
+    color: var(--md-on-surface);
+}
+
+.md-message-error {
+    background: var(--md-error-container);
+    color: var(--md-on-surface);
+}
+
+/* Screen management */
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Action bar */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--md-outline-variant);
+}
+
+/* Help text */
+.help-text {
+    background: var(--md-surface-container);
+    border-radius: var(--md-corner-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.help-text h3 {
+    color: var(--md-primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-text ol {
+    margin-left: 24px;
+}
+
+.help-text li {
+    margin-bottom: 8px;
+}
+
+/* Results highlight */
+.results-highlight {
+    background: var(--md-primary-container);
+    border-radius: var(--md-corner-lg);
+    padding: 32px;
+    text-align: center;
+    margin: 32px 0;
+}
+
+.results-highlight .material-icons {
+    font-size: 48px;
+    color: var(--md-primary);
+    margin-bottom: 16px;
+}
+
+/* Loading state */
+.loading {
+    text-align: center;
+    padding: 64px 32px;
+    color: var(--md-on-surface-variant);
+}

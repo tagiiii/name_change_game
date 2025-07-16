@@ -1,0 +1,87 @@
+/* Flat Design Buttons */
+
+.md-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 24px;
+    border: 2px solid transparent;
+    border-radius: var(--md-corner-sm);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    text-decoration: none;
+    user-select: none;
+    min-width: 120px;
+}
+
+.md-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Button variants */
+.md-button-filled {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    border-color: var(--md-primary);
+}
+
+.md-button-filled:hover:not(:disabled) {
+    background: #1D4ED8;
+    border-color: #1D4ED8;
+}
+
+.md-button-filled:active:not(:disabled) {
+    background: #1E40AF;
+    border-color: #1E40AF;
+}
+
+.md-button-tonal {
+    background: var(--md-secondary-container);
+    color: var(--md-on-secondary-container);
+    border-color: var(--md-secondary);
+}
+
+.md-button-tonal:hover:not(:disabled) {
+    background: var(--md-secondary);
+    color: var(--md-on-secondary);
+}
+
+.md-button-outlined {
+    background: transparent;
+    color: var(--md-primary);
+    border: 2px solid var(--md-primary);
+}
+
+.md-button-outlined:hover:not(:disabled) {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+}
+
+.md-button-text {
+    background: transparent;
+    color: var(--md-primary);
+    padding: 0 12px;
+    border: 2px solid transparent;
+}
+
+.md-button-text:hover:not(:disabled) {
+    background: var(--md-primary-container);
+    border-color: var(--md-primary);
+}
+
+/* Large buttons for primary actions */
+.md-button-large {
+    height: 54px;
+    padding: 0 32px;
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 160px;
+}

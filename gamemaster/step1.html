@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステップ1: URL共有 - 名前変えゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Material Design CSS Stylesheets -->
+    <link rel="stylesheet" href="../styles/material-design.css">
+    <link rel="stylesheet" href="../styles/typography.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/buttons.css">
+    <link rel="stylesheet" href="../styles/forms.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">ゲームマスター</h1>
+            <p class="body-large subtitle">ステップ1: URL共有</p>
+        </header>
+        
+        <div class="md-stepper">
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">URL共有</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">2</div>
+                <div class="md-step-label">名前登録</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">3</div>
+                <div class="md-step-label">投票開始</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">4</div>
+                <div class="md-step-label">結果確認</div>
+            </div>
+        </div>
+
+        <div class="md-card">
+            <div class="card-content">
+                <h2 class="headline-small" style="margin-bottom: 24px;">
+                    <span class="material-icons" style="vertical-align: middle; margin-right: 8px;">share</span>
+                    投票フォームURLを共有
+                </h2>
+                
+                <div class="form-row">
+                    <div class="md-text-field" style="position: relative;">
+                        <label for="room-url">投票フォームURL</label>
+                        <input type="url" id="room-url" readonly placeholder="ルームURLを生成中...">
+                        <div class="url-placeholder" id="url-placeholder" style="
+                            position: absolute;
+                            top: 50%;
+                            left: 16px;
+                            transform: translateY(-50%);
+                            color: var(--md-on-surface-variant);
+                            pointer-events: none;
+                            display: none;
+                            font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+                            font-size: 16px;
+                            background: linear-gradient(90deg, 
+                                var(--md-surface) 0%, 
+                                var(--md-surface-variant) 50%, 
+                                var(--md-surface) 100%);
+                            background-size: 200% 100%;
+                            animation: shimmer 1.5s infinite;
+                            padding: 8px 12px;
+                            border-radius: 8px;
+                            width: calc(100% - 32px);
+                        ">
+                            <span style="opacity: 0.6;">🔗 ゲームURLを準備中...</span>
+                        </div>
+                    </div>
+                    <button class="md-button md-button-tonal" onclick="copyUrl()" id="copy-button" disabled>
+                        <span class="material-icons material-icons-18">content_copy</span>
+                        コピー
+                    </button>
+                </div>
+                
+                <div class="help-text">
+                    <p class="body-medium">この投票フォームURLを参加者に送信してください。参加者はこのURLから投票に参加できます。</p>
+                </div>
+                
+                
+                <div class="action-bar">
+                    <button class="md-button md-button-outlined" onclick="startNewGame()">
+                        <span class="material-icons material-icons-18">refresh</span>
+                        新しいゲームを開始
+                    </button>
+                    <a href="step2.html" class="md-button md-button-filled md-button-large" id="next-button">
+                        次へ: 名前を登録する
+                        <span class="material-icons material-icons-18">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../supabase-client.js"></script>
+    
+    <!-- Application JavaScript Modules -->
+    <script src="../js/ui-manager.js"></script>
+    <script src="../js/gamemaster.js"></script>
+    
+    <style>
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .url-loading {
+            background: linear-gradient(90deg, 
+                var(--md-surface-variant) 25%, 
+                var(--md-surface-container) 50%, 
+                var(--md-surface-variant) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
+
+    <script>
+        let currentRoomId = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeSupabase();
+                await initializeGameMaster();
+            } catch (error) {
+                console.error('初期化エラー:', error);
+                UI.showMessage('初期化に失敗しました', 'error');
+            }
+        });
+
+        async function initializeGameMaster() {
+            // プレースホルダー表示
+            showLoadingState();
+            
+            // URLパラメータからルームIDを取得、なければ新規作成
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRoomId = urlParams.get('room') || GameMaster.generateRoomId();
+            
+            try {
+                // ルームを作成（既存の場合はスキップ）
+                await DatabaseAPI.createRoom(currentRoomId);
+                
+                // 共有URLを設定
+                const shareUrl = `${window.location.origin}${window.location.pathname.replace('/gamemaster/step1.html', '/index.html')}?room=${currentRoomId}`;
+                
+                // ローディング状態を解除してURLを表示
+                hideLoadingState();
+                document.getElementById('room-url').value = shareUrl;
+                document.getElementById('copy-button').disabled = false;
+                
+                // URLにルームIDを追加（リロード対応）
+                if (!urlParams.get('room')) {
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('room', currentRoomId);
+                    window.history.replaceState({}, '', newUrl);
+                }
+                
+                // 次へボタンにルームIDを設定
+                const nextButton = document.getElementById('next-button');
+                nextButton.href = `step2.html?room=${currentRoomId}`;
+                
+                UI.showMessage('ゲームルームを作成しました', 'success');
+            } catch (error) {
+                console.error('ゲームマスター初期化エラー:', error);
+                hideLoadingState();
+                UI.showMessage('ゲームルームの作成に失敗しました', 'error');
+            }
+        }
+
+        function showLoadingState() {
+            const urlInput = document.getElementById('room-url');
+            const placeholder = document.getElementById('url-placeholder');
+            
+            urlInput.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
+
+        function hideLoadingState() {
+            const urlInput = document.getElementById('room-url');
+            const placeholder = document.getElementById('url-placeholder');
+            
+            urlInput.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+
+        function copyUrl() {
+            const urlInput = document.getElementById('room-url');
+            const url = urlInput.value;
+            
+            if (!url) {
+                UI.showMessage('URLが生成されていません', 'error');
+                return;
+            }
+            
+            // 投票フォームURLとして説明付きでコピー
+            const shareText = `【名前変えゲーム - 投票フォームURL】
+
+以下のURLから投票に参加してください：
+${url}
+
+※このURLを開いて投票をお願いします！`;
+            
+            const button = event.target.closest('.md-button');
+            const originalText = button.innerHTML;
+            
+            // 現代的なClipboard APIを使用
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    // コピー成功
+                    button.innerHTML = '<span class="material-icons material-icons-18">check</span>コピー済み!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                }).catch((err) => {
+                    console.error('Clipboard API失敗:', err);
+                    // フォールバック処理
+                    fallbackCopy(shareText, button, originalText);
+                });
+            } else {
+                // フォールバック処理
+                fallbackCopy(shareText, button, originalText);
+            }
+        }
+
+        function fallbackCopy(text, button, originalText) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                if (successful) {
+                    button.innerHTML = '<span class="material-icons material-icons-18">check</span>コピー済み!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                } else {
+                    throw new Error('execCommand failed');
+                }
+            } catch (err) {
+                console.error('フォールバックコピーも失敗:', err);
+                button.innerHTML = '<span class="material-icons material-icons-18">error</span>コピー失敗';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        function startNewGame() {
+            if (confirm('新しいゲームを開始しますか？現在のルームは削除されます。')) {
+                // URLパラメータを削除してページを再読み込み
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.delete('room');
+                window.location.href = newUrl.toString();
+            }
+        }
+    </script>
+</body>
+</html>

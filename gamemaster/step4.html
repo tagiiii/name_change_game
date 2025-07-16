@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステップ4: 結果確認 - 名前変えゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Material Design CSS Stylesheets -->
+    <link rel="stylesheet" href="../styles/material-design.css">
+    <link rel="stylesheet" href="../styles/typography.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/buttons.css">
+    <link rel="stylesheet" href="../styles/forms.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">ゲームマスター</h1>
+            <p class="body-large subtitle">ステップ4: 結果確認</p>
+        </header>
+        
+        <div class="md-stepper">
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">URL共有</div>
+            </div>
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">名前登録</div>
+            </div>
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">投票開始</div>
+            </div>
+            <div class="md-step active">
+                <div class="md-step-icon">4</div>
+                <div class="md-step-label">結果確認</div>
+            </div>
+        </div>
+
+        <div class="md-card">
+            <div class="card-content">
+                <h2 class="headline-small" style="margin-bottom: 24px;">
+                    <span class="material-icons" style="vertical-align: middle; margin-right: 8px;">poll</span>
+                    投票結果
+                </h2>
+                
+                <div class="help-text">
+                    <p class="body-medium">投票が終了しました。詳細な結果は別画面で確認できます。</p>
+                </div>
+                
+                <div class="results-highlight">
+                    <span class="material-icons">analytics</span>
+                    <h3 class="title-large" style="margin: 16px 0;">投票結果を確認</h3>
+                    <p class="body-medium" style="margin-bottom: 24px;">別画面で詳細な投票結果と統計情報を確認できます</p>
+                    <button class="md-button md-button-filled md-button-large" onclick="showResultsPage()">
+                        結果を見る
+                    </button>
+                </div>
+
+                <!-- 簡易結果表示エリア -->
+                <div class="md-card" style="margin: 24px 0;" id="quick-results">
+                    <div class="card-content">
+                        <h3 class="title-medium" style="margin-bottom: 16px;">
+                            <span class="material-icons material-icons-20" style="vertical-align: middle; margin-right: 8px;">summarize</span>
+                            結果サマリー
+                        </h3>
+                        <div id="results-summary">
+                            <div class="loading">
+                                <span class="material-icons" style="font-size: 24px; color: var(--md-primary);">refresh</span>
+                                <div class="body-medium" style="margin-top: 8px;">結果を読み込み中...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <a href="step3.html" class="md-button md-button-outlined" id="back-button">
+                        <span class="material-icons material-icons-18">arrow_back</span>
+                        戻る
+                    </a>
+                    <button class="md-button md-button-tonal md-button-large" onclick="resetGame()">
+                        <span class="material-icons material-icons-18">refresh</span>
+                        新しいゲームを開始
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../supabase-client.js"></script>
+    
+    <!-- Application JavaScript Modules -->
+    <script src="../js/ui-manager.js"></script>
+    <script src="../js/results-manager.js"></script>
+    <script src="../js/realtime-manager.js"></script>
+    
+    <script>
+        let currentRoomId = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeSupabase();
+                await initializePage();
+            } catch (error) {
+                console.error('初期化エラー:', error);
+                UI.showMessage('初期化に失敗しました', 'error');
+            }
+        });
+
+        async function initializePage() {
+            // URLパラメータからルームIDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRoomId = urlParams.get('room');
+            
+            if (!currentRoomId) {
+                UI.showMessage('ルームIDが見つかりません', 'error');
+                setTimeout(() => {
+                    location.href = '../index.html';
+                }, 2000);
+                return;
+            }
+            
+            // AppStateを設定
+            window.AppState = { 
+                currentRoomId, 
+                currentRole: 'gamemaster'
+            };
+            
+            // ナビゲーションボタンにルームIDを設定
+            document.getElementById('back-button').href = `step3.html?room=${currentRoomId}`;
+            
+            // 結果を読み込み
+            await loadQuickResults();
+            
+            // リアルタイム更新を開始
+            RealtimeManager.startUpdates();
+        }
+
+        async function loadQuickResults() {
+            try {
+                const results = await ResultsManager.calculate();
+                displayQuickResults(results);
+            } catch (error) {
+                console.error('結果読み込みエラー:', error);
+                document.getElementById('results-summary').innerHTML = `
+                    <div class="md-message md-message-error">
+                        <span class="material-icons">error</span>
+                        <span>結果の読み込みに失敗しました</span>
+                    </div>
+                `;
+            }
+        }
+
+        function displayQuickResults(results) {
+            const totalItems = Object.keys(results).length;
+            const tieCount = Object.values(results).filter(result => result.isTie).length;
+            const winnerCount = totalItems - tieCount;
+            
+            const summaryHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="text-align: center; padding: 16px; background: var(--md-surface-container); border-radius: var(--md-corner-md);">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--md-primary);">${totalItems}</div>
+                        <div class="body-small">投票項目</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--md-success-container); border-radius: var(--md-corner-md);">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--md-success);">${winnerCount}</div>
+                        <div class="body-small">決定項目</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--md-warning-container); border-radius: var(--md-corner-md);">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #f56500;">${tieCount}</div>
+                        <div class="body-small">同票項目</div>
+                    </div>
+                </div>
+                ${totalItems === 0 ? '<p class="body-medium">まだ投票結果がありません。</p>' : ''}
+                ${tieCount > 0 ? '<p class="body-medium" style="color: #f56500;">⚠️ 同票の項目があります。詳細画面で確認してください。</p>' : ''}
+            `;
+            
+            document.getElementById('results-summary').innerHTML = summaryHtml;
+        }
+
+        function showResultsPage() {
+            if (currentRoomId) {
+                const resultsUrl = `../results.html?room=${currentRoomId}`;
+                window.open(resultsUrl, '_blank');
+            }
+        }
+
+        function resetGame() {
+            if (confirm('新しいゲームを開始しますか？現在のデータは失われます。')) {
+                location.href = '../index.html';
+            }
+        }
+    </script>
+</body>
+</html>

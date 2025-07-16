@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名前変えゲーム - 投票アプリ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Material Design CSS Stylesheets -->
+    <link rel="stylesheet" href="styles/material-design.css">
+    <link rel="stylesheet" href="styles/typography.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/buttons.css">
+    <link rel="stylesheet" href="styles/forms.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">名前変えゲーム</h1>
+            <p class="body-large subtitle">投票アプリ</p>
+        </header>
+        
+        <div class="md-card help-text">
+            <h3 class="title-medium">
+                <span class="material-icons material-icons-20">info</span>
+                ゲームの流れ
+            </h3>
+            <ol class="body-medium">
+                <li><strong>事前準備</strong>: 参加者が名前を変更</li>
+                <li><strong>ゲーム開始</strong>: ゲームマスターがルームを作成</li>
+                <li><strong>名前登録</strong>: ゲームマスターが参加者の名前と変更後の名前を入力</li>
+                <li><strong>投票</strong>: 回答者が「変更後の名前」→「参加者の名前」を推測</li>
+                <li><strong>結果発表</strong>: 最多票の組み合わせを表示</li>
+            </ol>
+        </div>
+
+        <div class="md-card help-text">
+            <h3 class="title-medium">
+                <span class="material-icons material-icons-20">rule</span>
+                ゲームルール
+            </h3>
+            <div class="body-medium">
+                <ul style="margin-left: 20px;">
+                    <li>room-Kに実在しない人の名前はOK</li>
+                    <li>誰が見ても嫌な気持ちにならない名前にしよう</li>
+                    <li>ゲーム途中での名前の変更はやめよう</li>
+                    <li>質問への回答のうそは1回までOK</li>
+                </ul>
+            </div>
+            <div style="margin-top: 16px;">
+                <button class="md-button md-button-outlined" onclick="copyRules()">
+                    <span class="material-icons material-icons-18">content_copy</span>
+                    ルールをコピー
+                </button>
+            </div>
+        </div>
+
+        <div class="md-card help-text">
+            <h3 class="title-medium">
+                <span class="material-icons material-icons-20">group</span>
+                参加確認
+            </h3>
+            <div class="body-medium">
+                <p style="margin-bottom: 12px;">以下の中から参加方法を選んでください：</p>
+                <ol style="margin-left: 20px;">
+                    <li><strong>名前を変える</strong> - 自分の名前を変更して推測の対象になる</li>
+                    <li><strong>当てる側をする</strong> - 変更後の名前を見て誰かを推測する</li>
+                    <li><strong>見学する</strong> - ゲームの様子を見守る</li>
+                </ol>
+            </div>
+            <div style="margin-top: 16px;">
+                <button class="md-button md-button-outlined" onclick="copyParticipation()">
+                    <span class="material-icons material-icons-18">content_copy</span>
+                    参加確認をコピー
+                </button>
+            </div>
+        </div>
+        
+        <div class="role-selection">
+            <div class="role-card" onclick="location.href='gamemaster/step1.html'">
+                <div class="role-icon">
+                    <span class="material-icons">play_arrow</span>
+                </div>
+                <div>
+                    <div class="title-medium">ゲームを開始する</div>
+                    <div class="body-medium" style="color: var(--md-on-surface-variant); margin-top: 8px;">
+                        ゲームマスターとして進行する
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-join for participants -->
+    <script>
+        // URLパラメータからルームIDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        
+        if (roomId) {
+            // 参加者として直接ステップ1に移動
+            location.href = `participant/step1.html?room=${roomId}`;
+        }
+
+        // ルールコピー機能
+        function copyRules() {
+            const rules = `【名前変えゲーム - ルール】
+
+• room-Kに実在しない人の名前はOK
+• 誰が見ても嫌な気持ちにならない名前にしよう
+• ゲーム途中での名前の変更はやめよう
+• 質問への回答のうそは1回までOK
+
+楽しいゲームにしましょう！🎮`;
+
+            copyToClipboard(rules, event.target);
+        }
+
+        // 参加確認コピー機能
+        function copyParticipation() {
+            const participation = `【名前変えゲーム - 参加確認】
+
+以下の中から参加方法を選んでください：
+
+①名前を変える - 自分の名前を変更して推測の対象になる
+②当てる側をする - 変更後の名前を見て誰かを推測する
+③見学する - ゲームの様子を見守る
+
+どの形でも参加お待ちしています！👥`;
+
+            copyToClipboard(participation, event.target);
+        }
+
+        // 共通のコピー機能
+        function copyToClipboard(text, targetElement) {
+            const button = targetElement.closest('.md-button');
+            const originalText = button.innerHTML;
+            
+            // 現代的なClipboard APIを使用
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // コピー成功
+                    button.innerHTML = '<span class="material-icons material-icons-18">check</span>コピー完了！';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                }).catch((err) => {
+                    console.error('Clipboard API失敗:', err);
+                    // フォールバック処理
+                    fallbackCopyForIndex(text, button, originalText);
+                });
+            } else {
+                // フォールバック処理
+                fallbackCopyForIndex(text, button, originalText);
+            }
+        }
+
+        function fallbackCopyForIndex(text, button, originalText) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                if (successful) {
+                    button.innerHTML = '<span class="material-icons material-icons-18">check</span>コピー完了！';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                } else {
+                    throw new Error('execCommand failed');
+                }
+            } catch (err) {
+                console.error('フォールバックコピーも失敗:', err);
+                button.innerHTML = '<span class="material-icons material-icons-18">error</span>コピー失敗';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>

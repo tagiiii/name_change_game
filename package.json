@@ -1,0 +1,30 @@
+{
+  "name": "name-change-game",
+  "version": "1.0.0",
+  "description": "Metapage名前変えゲーム用投票アプリ",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static files ready for deployment'",
+    "deploy": "gh-pages -d ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/name-change-game.git"
+  },
+  "keywords": [
+    "game",
+    "voting",
+    "metaverse",
+    "realtime"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.0"
+  }
+}

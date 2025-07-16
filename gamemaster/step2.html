@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステップ2: 名前登録 - 名前変えゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Material Design CSS Stylesheets -->
+    <link rel="stylesheet" href="../styles/material-design.css">
+    <link rel="stylesheet" href="../styles/typography.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/buttons.css">
+    <link rel="stylesheet" href="../styles/forms.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="headline-large">ゲームマスター</h1>
+            <p class="body-large subtitle">ステップ2: 名前登録</p>
+        </header>
+        
+        <div class="md-stepper">
+            <div class="md-step completed">
+                <div class="md-step-icon">
+                    <span class="material-icons" style="font-size: 12px;">check</span>
+                </div>
+                <div class="md-step-label">URL共有</div>
+            </div>
+            <div class="md-step active">
+                <div class="md-step-icon">2</div>
+                <div class="md-step-label">名前登録</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">3</div>
+                <div class="md-step-label">投票開始</div>
+            </div>
+            <div class="md-step">
+                <div class="md-step-icon">4</div>
+                <div class="md-step-label">結果確認</div>
+            </div>
+        </div>
+
+        <div class="md-card">
+            <div class="card-content">
+                <h2 class="headline-small" style="margin-bottom: 24px;">
+                    <span class="material-icons" style="vertical-align: middle; margin-right: 8px;">edit</span>
+                    名前を登録
+                </h2>
+                
+                <div class="help-text">
+                    <p class="body-medium">参加者の「変更前の名前」と「変更後の名前」を入力してください。</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="md-text-field">
+                        <label for="original-name">元の名前（変更前）</label>
+                        <input type="text" id="original-name" placeholder="例: 田中太郎" onkeypress="if(event.key==='Enter') NameManager.addOriginalName()">
+                    </div>
+                    <button class="md-button md-button-tonal" onclick="NameManager.addOriginalName()">
+                        <span class="material-icons material-icons-18">add</span>
+                        追加
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <div class="md-text-field">
+                        <label for="changed-name">変更後の名前</label>
+                        <input type="text" id="changed-name" placeholder="例: スーパーマン" onkeypress="if(event.key==='Enter') NameManager.addChangedName()">
+                    </div>
+                    <button class="md-button md-button-tonal" onclick="NameManager.addChangedName()">
+                        <span class="material-icons material-icons-18">add</span>
+                        追加
+                    </button>
+                </div>
+
+                <div class="md-card" style="margin: 24px 0;">
+                    <div class="card-content">
+                        <h3 class="title-medium" style="margin-bottom: 16px;">参加者の名前リスト</h3>
+                        <div class="md-list" id="original-names-list">
+                            <div class="md-list-item">まだ元の名前が登録されていません。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md-card" style="margin: 24px 0;">
+                    <div class="card-content">
+                        <h3 class="title-medium" style="margin-bottom: 16px;">変更後の名前リスト</h3>
+                        <div class="md-list" id="changed-names-list">
+                            <div class="md-list-item">まだ変更後の名前が登録されていません。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <a href="step1.html" class="md-button md-button-outlined" id="back-button">
+                        <span class="material-icons material-icons-18">arrow_back</span>
+                        戻る
+                    </a>
+                    <a href="step3.html" class="md-button md-button-filled md-button-large" id="next-button">
+                        次へ: 投票を開始する
+                        <span class="material-icons material-icons-18">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../supabase-client.js"></script>
+    
+    <!-- Application JavaScript Modules -->
+    <script src="../js/ui-manager.js"></script>
+    <script src="../js/name-manager.js"></script>
+    <script src="../js/realtime-manager.js"></script>
+    
+    <script>
+        let currentRoomId = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeSupabase();
+                await initializePage();
+            } catch (error) {
+                console.error('初期化エラー:', error);
+                UI.showMessage('初期化に失敗しました', 'error');
+            }
+        });
+
+        async function initializePage() {
+            // URLパラメータからルームIDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRoomId = urlParams.get('room');
+            
+            if (!currentRoomId) {
+                UI.showMessage('ルームIDが見つかりません', 'error');
+                setTimeout(() => {
+                    location.href = '../index.html';
+                }, 2000);
+                return;
+            }
+            
+            // AppStateを設定
+            window.AppState = { currentRoomId, currentRole: 'gamemaster' };
+            
+            // ナビゲーションボタンにルームIDを設定
+            document.getElementById('back-button').href = `step1.html?room=${currentRoomId}`;
+            document.getElementById('next-button').href = `step3.html?room=${currentRoomId}`;
+            
+            // 名前リストを読み込み
+            await NameManager.loadOriginalNames();
+            await NameManager.loadChangedNames();
+            
+            // リアルタイム更新を開始
+            RealtimeManager.startUpdates();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+/* Responsive Design for Desktop Optimization */
+
+/* Responsive adjustments for desktop */
+@media (min-width: 1024px) {
+    .app-container {
+        max-width: 1200px;
+        padding: 0 40px;
+        gap: 40px;
+    }
+
+    .role-selection {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+    }
+
+    .card-content {
+        padding: 32px;
+    }
+
+    .form-row {
+        gap: 24px;
+    }
+
+    .voting-section {
+        gap: 24px;
+    }
+
+    .md-stepper {
+        padding: 32px;
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .app-container {
+        max-width: 1440px;
+    }
+}
